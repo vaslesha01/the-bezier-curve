@@ -16,28 +16,28 @@ int main() {
 
     RenderWindow window(VideoMode(800,800), "The Bezier Curve", Style::Close);
 
-    int r = 3; // Radius of CircleShape
+    int r = 5; // Radius of CircleShape
 
-    Vector2f p0(100, 500);
-    Vector2f p1(200, 100);
-    Vector2f p2(600, 100);
-    Vector2f p3(700, 500);
+    Vector2f p0(100 - r, 500 - r);
+    Vector2f p1(200 - r, 100 - r);
+    Vector2f p2(600 - r, 100 - r);
+    Vector2f p3(700 - r, 500 - r);
 
-    CircleShape p00(3.f);
+    CircleShape p00(r);
     p00.setFillColor(Color::Cyan);
-    p00.setPosition(100 - r, 500); // we subtract the radius, because by default the position of the circle...
-                                   // ...is determined on the left edge, and we put it in the center
-    CircleShape p11(3.f);
+    p00.setPosition(100 - r, 500 - r); // we subtract the radius, because by default the position of the circle...
+                                       // ...is determined on the left edge, and we put it in the center
+    CircleShape p11(r);
     p11.setFillColor(Color::Blue);
-    p11.setPosition(200 - r, 100);
+    p11.setPosition(200 - r, 100 - r);
 
-    CircleShape p22(3.f);
+    CircleShape p22(r);
     p22.setFillColor(Color::Blue);
-    p22.setPosition(600 - r, 100);
+    p22.setPosition(600 - r, 100 - r);
 
-    CircleShape p33(3.f);
+    CircleShape p33(r);
     p33.setFillColor(Color::Cyan);
-    p33.setPosition(700 - r, 500);
+    p33.setPosition(700 - r, 500 - r);
 
     Vertex line1[] = {
         Vertex(p0, Color(255,255,255,117)),
@@ -57,89 +57,80 @@ int main() {
     bool draggingStart1 = false;
     bool draggingEnd1 = false;
 
-    int min_move = 5; // min_move is the number of pixels to track the transfer
-
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed)
                 window.close();
 
-            if (event.type == Event::MouseButtonPressed) {
-                if (event.mouseButton.button == Mouse::Left) {
-                    float mBx = event.mouseButton.x;
-                    float mBy = event.mouseButton.y;
-                    if (hypot(mBx - p0.x, mBy - p0.y) < min_move) {
-                        draggingStart0 = true;
-                    }
-                    else if (hypot(mBx - p1.x, mBy - p1.y) < min_move) {
-                        draggingEnd0 = true;
-                    }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+                float mBx = event.mouseButton.x;
+                float mBy = event.mouseButton.y;
+                if (hypot(mBx - p0.x, mBy - p0.y) < r) {        // we compare the distance from the cursor to the point...
+                    draggingStart0 = true;                      // that we are going to move and if the cursor is at the point, then the capture is fixed
+                }
+                else if (hypot(mBx - p1.x, mBy - p1.y) < r) {
+                    draggingEnd0 = true;
                 }
             }
 
-            if (event.type == Event::MouseButtonPressed) {
-                if (event.mouseButton.button == Mouse::Left) {
-                    float mBx = event.mouseButton.x;
-                    float mBy = event.mouseButton.y;
-                    if (hypot(mBx - p2.x, mBy - p2.y) < min_move) {
-                        draggingStart1 = true;
-                    }
-                    else if (hypot(mBx - p3.x, mBy - p3.y) < min_move) {
-                        draggingEnd1 = true;
-                    }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+                float mBx = event.mouseButton.x;
+                float mBy = event.mouseButton.y;
+                if (hypot(mBx - p2.x, mBy - p2.y) < r) {
+                    draggingStart1 = true;
                 }
+                else if (hypot(mBx - p3.x, mBy - p3.y) < r) {
+                    draggingEnd1 = true;
+                }
+
             }
 
-            if (event.type == Event::MouseButtonReleased) {
-                if (event.mouseButton.button == Mouse::Left) {
-                    draggingStart0 = false;
-                    draggingEnd0 = false;
-                }
+            if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left) {
+                draggingStart0 = false;
+                draggingEnd0 = false;
             }
-            if (event.type == Event::MouseButtonReleased) {
-                if (event.mouseButton.button == Mouse::Left) {
-                    draggingStart1 = false;
-                    draggingEnd1 = false;
-                }
+
+            if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left) {
+                draggingStart1 = false;
+                draggingEnd1 = false;
             }
-            if (event.type == sf::Event::MouseMoved) {
-                if (draggingStart0) {
-                    float dx = event.mouseMove.x - p0.x;
-                    float dy = event.mouseMove.y - p0.y;
-                    p0.x += dx;
-                    p1.x += dx;
-                    p0.y += dy;
-                    p1.y += dy;
-                    p11.setPosition(p1.x - r, p1.y);
-                }
-                if (draggingEnd1) {
-                    float dx = event.mouseMove.x - p3.x;
-                    float dy = event.mouseMove.y - p3.y;
-                    p2.x += dx;
-                    p3.x += dx;
-                    p2.y += dy;
-                    p3.y += dy;
-                    p22.setPosition(p2.x - r, p2.y);
-                }
+
+            if (event.type == sf::Event::MouseMoved && draggingStart0) {
+                float dx = event.mouseMove.x - p0.x;
+                float dy = event.mouseMove.y - p0.y;
+                p0.x += dx;
+                p1.x += dx;
+                p0.y += dy;
+                p1.y += dy;
+                p11.setPosition(p1.x - r, p1.y - r);
+            }
+            if (event.type == sf::Event::MouseMoved && draggingEnd1) {
+                float dx = event.mouseMove.x - p3.x;
+                float dy = event.mouseMove.y - p3.y;
+                p2.x += dx;
+                p3.x += dx;
+                p2.y += dy;
+                p3.y += dy;
+                p22.setPosition(p2.x - r, p2.y - r);
             }
         }
 
         if (draggingStart0) {
             p0 = window.mapPixelToCoords(Mouse::getPosition(window));
-            p00.setPosition(p0.x - r, p0.y);
+            p00.setPosition(p0.x - r, p0.y - r);
         }
         else if (draggingEnd0) {
             p1 = window.mapPixelToCoords(Mouse::getPosition(window));
-            p11.setPosition(p1.x - r, p1.y);
+            p11.setPosition(p1.x - r, p1.y - r);
         }
         if (draggingStart1) {
             p2 = window.mapPixelToCoords(Mouse::getPosition(window));
-            p22.setPosition(p2.x - r, p2.y);
+            p22.setPosition(p2.x - r, p2.y - r);
         }
         else if (draggingEnd1) {
             p3 = window.mapPixelToCoords(Mouse::getPosition(window));
-            p33.setPosition(p3.x - r, p3.y);
+            p33.setPosition(p3.x - r, p3.y - r);
         }
         
         if (draggingStart0 || draggingEnd0 || draggingStart1 || draggingEnd1) {
@@ -170,4 +161,5 @@ int main() {
     }
 
     return 0;
+
 }
