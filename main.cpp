@@ -21,8 +21,6 @@ int main() {
     Vector2f p2(600, 100);
     Vector2f p3(700, 500);
 
-    Vector2f dragOffset;
-
     CircleShape p00(3.f);
     p00.setFillColor(Color::Cyan);
     p00.setPosition(97, 500);
