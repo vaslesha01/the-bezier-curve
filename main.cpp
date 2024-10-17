@@ -1,22 +1,20 @@
-#include <iostream>
 #include <SFML/Graphics.hpp>
 
-using namespace std;
 using namespace sf;
 
 Vector2f bezier(float t, const Vector2f p0, const Vector2f p1, const Vector2f p2, const Vector2f p3) {
-
+                                            // t is the parameter of the curve function, which changes in [0;1]
     Vector2f point = (1-t)*(1-t)*(1-t) *p0; // (1-t)^3 * P0
     point += 3 * (1-t)*(1-t) * t * p1;      // 3 * (1-t)^2 * t * P1
-    point += 3 * (1-t) * t*t * p2;      // 3 * (1-t) * t^2 * P2
-    point += t*t*t * p3;              // t^3 * P3
+    point += 3 * (1-t) * t*t * p2;          // 3 * (1-t) * t^2 * P2
+    point += t*t*t * p3;                    // t^3 * P3
 
     return point;
 }
 
 int main() {
 
-    RenderWindow window(VideoMode(1080, 720), "The Bezier Curve");
+    RenderWindow window(VideoMode(1080,720), "The Bezier Curve");
 
     Vector2f p0(100, 500);
     Vector2f p1(200, 100);
@@ -27,19 +25,19 @@ int main() {
 
     CircleShape p00(3.f);
     p00.setFillColor(Color::Cyan);
-    p00.setPosition(100, 500);
+    p00.setPosition(97, 500);
 
     CircleShape p11(3.f);
     p11.setFillColor(Color::Blue);
-    p11.setPosition(200, 100);
+    p11.setPosition(197, 100);
 
     CircleShape p22(3.f);
     p22.setFillColor(Color::Blue);
-    p22.setPosition(600, 100);
+    p22.setPosition(597, 100);
 
     CircleShape p33(3.f);
     p33.setFillColor(Color::Cyan);
-    p33.setPosition(700, 500);
+    p33.setPosition(697, 500);
 
     Vertex line1[] = {
         Vertex(p0, Color(255,255,255,117)),
@@ -59,6 +57,8 @@ int main() {
     bool draggingStart1 = false;
     bool draggingEnd1 = false;
 
+    int f = 5; // f is the number of pixels to track the transfer
+
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -67,10 +67,12 @@ int main() {
 
             if (event.type == Event::MouseButtonPressed) {
                 if (event.mouseButton.button == Mouse::Left) {
-                    if (hypot(event.mouseButton.x - p0.x, event.mouseButton.y - p0.y) < 10.f) {
+                    float mBx = event.mouseButton.x;
+                    float mBy = event.mouseButton.y;
+                    if (hypot(mBx - p0.x, mBy - p0.y) < f) { 
                         draggingStart0 = true;
                     }
-                    else if (hypot(event.mouseButton.x - p1.x, event.mouseButton.y - p1.y) < 10.f) {
+                    else if (hypot(mBx - p1.x, mBy - p1.y) < f) {
                         draggingEnd0 = true;
                     }
                 }
@@ -78,10 +80,12 @@ int main() {
 
             if (event.type == Event::MouseButtonPressed) {
                 if (event.mouseButton.button == Mouse::Left) {
-                    if (hypot(event.mouseButton.x - p2.x, event.mouseButton.y - p2.y) < 10.f) {
+                    float mBx = event.mouseButton.x;
+                    float mBy = event.mouseButton.y;
+                    if (hypot(mBx - p2.x, mBy - p2.y) < f) {
                         draggingStart1 = true;
                     }
-                    else if (hypot(event.mouseButton.x - p3.x, event.mouseButton.y - p3.y) < 10.f) {
+                    else if (hypot(mBx - p3.x, mBy - p3.y) < f) {
                         draggingEnd1 = true;
                     }
                 }
@@ -107,7 +111,7 @@ int main() {
                     p1.x += dx;
                     p0.y += dy;
                     p1.y += dy;
-                    p11.setPosition(p1.x, p1.y);
+                    p11.setPosition(p1.x-3, p1.y);
                 }
                 if (draggingEnd1) {
                     float dx = event.mouseMove.x - p3.x;
@@ -116,29 +120,29 @@ int main() {
                     p3.x += dx;
                     p2.y += dy;
                     p3.y += dy;
-                    p22.setPosition(p2.x, p2.y);
+                    p22.setPosition(p2.x-3, p2.y);
                 }
             }
         }
 
         if (draggingStart0) {
             p0 = window.mapPixelToCoords(Mouse::getPosition(window));
-            p00.setPosition(p0.x, p0.y);
-            curve = {};
+            p00.setPosition(p0.x-3, p0.y);
         }
         else if (draggingEnd0) {
             p1 = window.mapPixelToCoords(Mouse::getPosition(window));
-            p11.setPosition(p1.x, p1.y);
-            curve = {};
+            p11.setPosition(p1.x-3, p1.y);
         }
         if (draggingStart1) {
             p2 = window.mapPixelToCoords(Mouse::getPosition(window));
-            p22.setPosition(p2.x, p2.y);
-            curve = {};
+            p22.setPosition(p2.x-3, p2.y);
         }
         else if (draggingEnd1) {
             p3 = window.mapPixelToCoords(Mouse::getPosition(window));
-            p33.setPosition(p3.x, p3.y);
+            p33.setPosition(p3.x-3, p3.y);
+        }
+        
+        if (draggingStart0 || draggingEnd0 || draggingStart1 || draggingEnd1) {
             curve = {};
         }
 
