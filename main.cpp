@@ -15,10 +15,8 @@ Vector2f bezier(float t, const Vector2f p0, const Vector2f p1, const Vector2f p2
 }
 
 int main() {
-    
-    float t = 0;
 
-    RenderWindow window(VideoMode(1080, 720), L"������ �����");
+    RenderWindow window(VideoMode(1080, 720), "The Bezier Curve");
 
     Vector2f p0(100, 500);
     Vector2f p1(200, 100);
@@ -52,6 +50,7 @@ int main() {
         Vertex(p2, Color(255,255,255,117)),
         Vertex(p3, Color(255,255,255,117))
     };
+
     VertexArray curve(PrimitiveType::LineStrip);
 
     bool draggingStart0 = false;
@@ -125,32 +124,28 @@ int main() {
         if (draggingStart0) {
             p0 = window.mapPixelToCoords(Mouse::getPosition(window));
             p00.setPosition(p0.x, p0.y);
-            t = 0;
             curve = {};
         }
         else if (draggingEnd0) {
             p1 = window.mapPixelToCoords(Mouse::getPosition(window));
             p11.setPosition(p1.x, p1.y);
-            t = 0;
             curve = {};
         }
         if (draggingStart1) {
             p2 = window.mapPixelToCoords(Mouse::getPosition(window));
             p22.setPosition(p2.x, p2.y);
-            t = 0;
             curve = {};
         }
         else if (draggingEnd1) {
             p3 = window.mapPixelToCoords(Mouse::getPosition(window));
             p33.setPosition(p3.x, p3.y);
-            t = 0;
             curve = {};
         }
 
-
-        if (t < 1) {
+        for (float t = 0; t <= 1; t += 0.001) {
             curve.append(Vertex(bezier(t, p0, p1, p2, p3), Color::Cyan));
         }
+
         line1[0].position = p0;
         line1[1].position = p1;
 
@@ -168,7 +163,6 @@ int main() {
         
         window.display();
 
-        t += 0.001;
     }
 
     return 0;
