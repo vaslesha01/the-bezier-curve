@@ -66,10 +66,10 @@ int main() {
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 float mBx = event.mouseButton.x;
                 float mBy = event.mouseButton.y;
-                if (hypot(mBx - p0.x, mBy - p0.y) < r) {        // we compare the distance from the cursor to the point...
+                if (hypot(mBx - p0.x, mBy - p0.y) <= r) {        // we compare the distance from the cursor to the point...
                     draggingStart0 = true;                      // that we are going to move and if the cursor is at the point, then the capture is fixed
                 }
-                else if (hypot(mBx - p1.x, mBy - p1.y) < r) {
+                else if (hypot(mBx - p1.x, mBy - p1.y) <= r) {
                     draggingEnd0 = true;
                 }
             }
@@ -77,10 +77,10 @@ int main() {
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 float mBx = event.mouseButton.x;
                 float mBy = event.mouseButton.y;
-                if (hypot(mBx - p2.x, mBy - p2.y) < r) {
+                if (hypot(mBx - p2.x, mBy - p2.y) <= r) {
                     draggingStart1 = true;
                 }
-                else if (hypot(mBx - p3.x, mBy - p3.y) < r) {
+                else if (hypot(mBx - p3.x, mBy - p3.y) <= r) {
                     draggingEnd1 = true;
                 }
 
