@@ -1,2 +1,2 @@
-# The Bezier Curve!
+# The Bezier Curve
 ![Example](output.gif)
